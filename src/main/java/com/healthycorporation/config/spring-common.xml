@@ -12,7 +12,7 @@
         <property name="url" value="jdbc:mysql://120.24.58.237/HealthyCorporation"></property>  
         <property name="username" value="root"></property>  
         <property name="password" value="xDPgrPTuZ65D"></property>  
-    </bean-->  
+    </bean -->  
     
     <bean id="dataSource"
           class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -25,10 +25,10 @@
         <property name="user" value="root"></property>
         <property name="password" value="xDPgrPTuZ65D"></property>
         <property name="minPoolSize">
-            <value>1</value>
+            <value>20</value>
         </property>
         <property name="maxPoolSize">
-            <value>20</value>
+            <value>400</value>
         </property>
         <property name="maxIdleTime">
             <value>1800</value>
@@ -63,8 +63,8 @@
             <props>  
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>  
                 <prop key="hibernate.hbm2ddl.auto">update</prop>  
-                <prop key="hibernate.show_sql">false</prop>  
-                <prop key="hibernate.format_sql">false</prop>  
+                <prop key="hibernate.show_sql">true</prop>  
+                <prop key="hibernate.format_sql">true</prop>  
             </props>  
         </property>  
         <property name="annotatedClasses">  
