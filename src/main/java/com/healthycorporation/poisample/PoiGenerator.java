@@ -5,11 +5,13 @@
  */
 package com.healthycorporation.poisample;
 
+import com.healthycorporation.dao.CustomerStatisicaDAO;
 import com.healthycorporation.dao.RegisterClassDAO;
 import com.healthycorporation.dao.SalesRecordDAO;
 import com.healthycorporation.entity.SalesRecord;
 import com.healthycorporation.dao.NameMapDAO;
 import com.healthycorporation.entity.ClassSummaryBO;
+import com.healthycorporation.entity.CustomerStatisica;
 import com.healthycorporation.entity.NameKeyValue;
 import com.healthycorporation.utils.DateUtils;
 import com.healthycorporation.utils.PoiUtils;
@@ -22,6 +24,7 @@ import java.io.InputStream;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -108,6 +111,50 @@ public class PoiGenerator {
         cell = row.createCell(4);
         cell.setCellValue("单次课时费");
         cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+    }
+    
+    private static void generateRegClsStaticTemplate(String coacher,Sheet sheet,java.sql.Date startDate,java.sql.Date endDate){
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue("客户名称");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(1);
+        cell.setCellValue("第一周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(2);
+        cell.setCellValue("第二周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(3);
+        cell.setCellValue("第三周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(4);
+        cell.setCellValue("第四周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(5);
+        cell.setCellValue("第五周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(6);
+        cell.setCellValue("第六周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(7);
+        cell.setCellValue("第七周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(8);
+        cell.setCellValue("第八周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(9);
+        cell.setCellValue("第九周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(10);
+        cell.setCellValue("第十周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(11);
+        cell.setCellValue("第十一周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        cell = row.createCell(12);
+        cell.setCellValue("第十二周");
+        cell.setCellStyle(PoiUtils.getTemplateHeaderStyle(sheet.getWorkbook()));
+        
     }
     
     private static void generateSalesStaticTemplate(String coacher,Sheet sheet,java.sql.Date startDate,java.sql.Date endDate){
@@ -203,6 +250,8 @@ public class PoiGenerator {
     
     
     private void generateClassSummaryReport(Sheet sheet,String coacher){
+        HashMap<String,Integer> namePrice = new HashMap<String, Integer>();
+        
         RegisterClassDAO registerRec = (RegisterClassDAO) factory.getBean("registerClassDAO");
         SalesRecordDAO salesDAO = (SalesRecordDAO)factory.getBean("salesRecordDAO");
         
@@ -210,14 +259,45 @@ public class PoiGenerator {
         
         for(ClassSummaryBO summaryBO : classSummaryBO){
             System.out.println("SalesRecord:"+summaryBO.getCustomer());
-            SalesRecord sr = salesDAO.findSalesRecordByCustomer(summaryBO.getCustomer(),endDate,summaryBO.getClassType());
-            
-            summaryBO.setClassPrice(sr.getUnitPrice());
+            if(!namePrice.containsKey(summaryBO.getCustomer())){
+                SalesRecord sr = salesDAO.findSalesRecordByCustomer(summaryBO.getCustomer(),endDate,summaryBO.getClassType());
+                namePrice.put(summaryBO.getCustomer(), sr.getUnitPrice());
+            }
+            summaryBO.setClassPrice(namePrice.get(summaryBO.getCustomer()));
         }
         
         generateRegisterSummarySheet(classSummaryBO,sheet);
         
     }
+    
+    private void generateRegClsStaticReport(Sheet sheet, String coacher){
+        
+        CustomerStatisicaDAO cusStatisDAO = (CustomerStatisicaDAO) factory.getBean("customerStatisicaDAO");
+        
+        cusStatisDAO.generateCustomerStatic();
+        
+        List<CustomerStatisica> results = cusStatisDAO.getCustomerStatiscia(coacher);
+        
+        generateRegClsStaticSheet(results,sheet);
+        
+        /**
+        System.out.println(" ");
+        for(String customer:customerStaticMap.keySet()){
+            System.out.print(customer+" ");
+            
+            for(Integer count:customerStaticMap.get(customer)){
+                System.out.print(count+" ");
+            }
+            System.out.println(" ");
+        }
+        System.out.println(" ");
+        * **/
+    }
+    
+    private Date getWeekDate(Date currentDate, int week){
+        return new Date(currentDate.getTime()-week*24L*7L*60L*60L*1000L);
+    }
+   
     
     private void generateClassSalesReport(Sheet sheet,String coacher){
         SalesRecordDAO salesDAO = (SalesRecordDAO)factory.getBean("salesRecordDAO");
@@ -306,6 +386,38 @@ public class PoiGenerator {
             rowNum++;
         }
     }
+    
+    private void generateRegClsStaticSheet( List<CustomerStatisica> results, Sheet sheet){
+        int rowNum = 1;
+        
+        for(CustomerStatisica customer:results){
+            Row row = sheet.getRow(rowNum);
+            if(row == null){
+                row = sheet.createRow(rowNum);
+            }
+            
+            Cell cell = row.getCell(0);
+            if(cell == null){
+                cell = row.createCell(0);
+                cell.setCellType(Cell.CELL_TYPE_STRING);
+                cell.setCellValue(this.nameMap.get(customer.getCustomer()));
+            }
+            
+            int cellNumber = 1;
+            while(cellNumber<=12){
+                 Cell cell1 = row.getCell(cellNumber);
+             if(cell1 == null){
+                cell1 = row.createCell(cellNumber);
+                cell1.setCellType(Cell.CELL_TYPE_STRING);
+                cell1.setCellValue(customer.getWeekValue(cellNumber));
+            }
+                cellNumber++;
+            }
+            rowNum++;
+        }
+        
+    }
+    
     
     private void generateSalesSummarySheet(List<com.healthycorporation.entity.SalesRecord> salesRecs, Sheet sheet){
          int rowNum = 1;
@@ -449,7 +561,8 @@ public class PoiGenerator {
                 return String.valueOf(CellValueEnum.NonSupport);
         }
     }
-
+    
+    
     public void generateReport() throws IOException, FileNotFoundException, InvalidFormatException {
         RegisterClassDAO registerRec = (RegisterClassDAO) factory.getBean("registerClassDAO");
 
@@ -457,7 +570,7 @@ public class PoiGenerator {
         
         SimpleDateFormat parseYearMonth = new SimpleDateFormat("YYYYMMdd");
         for (String name : names) {
-            
+           // String name = "何荟";
             reportName = name + "的私教工作记录" + parseYearMonth.format(startDate) + "-" + parseYearMonth.format(endDate)+".xls";
             Workbook wb;
             if (removeFile(reportName)) {
@@ -469,6 +582,8 @@ public class PoiGenerator {
                 generateRegisterSummaryTemplate(name,sheet,startDate,endDate);
                 sheet = wb.createSheet("销售统计");
                 generateSalesStaticTemplate(name,sheet,startDate,endDate);
+                sheet = wb.createSheet("会员上课频率统计");
+                generateRegClsStaticTemplate(name,sheet,startDate,endDate);
                 wb.write(fos);
                 fos.flush();
                 fos.close();
@@ -481,6 +596,8 @@ public class PoiGenerator {
             generateClassSummaryReport(sheet1,name);
             Sheet sheet2 = wb.getSheet("销售统计");
             generateClassSalesReport(sheet2, name);
+            Sheet sheet3 = wb.getSheet("会员上课频率统计");
+            generateRegClsStaticReport(sheet3,name);
             FileOutputStream fos1 = new FileOutputStream(reportName);
             wb.write(fos1);
             fos1.flush();

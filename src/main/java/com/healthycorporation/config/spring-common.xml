@@ -76,7 +76,8 @@
                 <value>com.healthycorporation.entity.RegisterClass</value> 
                 <value>com.healthycorporation.entity.SalesRecord</value> 
                 <value>com.healthycorporation.entity.NameKeyValue</value>
-                <value>com.healthycorporation.entity.CustomerGroup</value>   
+                <value>com.healthycorporation.entity.CustomerGroup</value>  
+                <value>com.healthycorporation.entity.CustomerStatisica</value>  
             </list>  
         </property>  
     </bean>
@@ -110,6 +111,10 @@
     </bean>
     
     <bean id="salesRecordDAO" class="com.healthycorporation.dao.impl.SalesRecordDAOImpl">  
+        <property name="sessionFactory" ref="sessionFactory"></property>  
+    </bean>
+    
+     <bean id="customerStatisicaDAO" class="com.healthycorporation.dao.impl.CustomerStatisicaDAOImpl">  
         <property name="sessionFactory" ref="sessionFactory"></property>  
     </bean>
     

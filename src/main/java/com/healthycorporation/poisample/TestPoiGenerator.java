@@ -19,7 +19,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  */
 public class TestPoiGenerator {
     public static void main(String[] args) throws IOException, FileNotFoundException, InvalidFormatException{
-        Date startDate = Date.valueOf("2016-01-30");
+        Date startDate = Date.valueOf("2016-04-01");
         ApplicationContext factory = new FileSystemXmlApplicationContext( "src/main/java/com/healthycorporation/config/spring-*.xml"); 
         PoiGenerator poiGen = new PoiGenerator(DateUtils.getStartDate(startDate),DateUtils.getEndDate(startDate));
         poiGen.setFactory(factory);
