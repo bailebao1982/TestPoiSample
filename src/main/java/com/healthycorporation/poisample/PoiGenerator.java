@@ -401,6 +401,7 @@ public class PoiGenerator {
                 cell = row.createCell(0);
                 cell.setCellType(Cell.CELL_TYPE_STRING);
                 cell.setCellValue(this.nameMap.get(customer.getCustomer()));
+                //cell.setCellValue(customer.getCustomer());
             }
             
             int cellNumber = 1;

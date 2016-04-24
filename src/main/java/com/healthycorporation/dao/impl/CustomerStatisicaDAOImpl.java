@@ -36,7 +36,7 @@ public class CustomerStatisicaDAOImpl implements CustomerStatisicaDAO{
 
     @Override
     public List<CustomerStatisica> getCustomerStatiscia(String coacher) {
-       String hql = "from CustomerStatisica where Coacher = :coacher"; 
+       String hql = "from CustomerStatisica where Coacher = :coacher order by Week1 desc,Week2 desc,Week3 desc,Week4 desc,Week5 desc,Week6 desc,Week7 desc,Week8 desc,Week9 desc,Week10 desc,Week11 desc,Week12 desc"; 
         Query query = sessionFactory.openSession().createQuery(hql);
         
        query.setString("coacher", coacher);
